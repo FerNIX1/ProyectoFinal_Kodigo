@@ -9,6 +9,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\JsonUnauthenticated;
 use App\Http\Controllers\PedidoController;
 
+
+Route::get('test', [ProductController::class, 'test']);
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');

@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    public function test(){
+        return response()->json([
+            'message' => 'API is working!',
+            'status' => true
+        ], 200);
+    }
     public function getAllProducts(Request $request)
 {
     try{
