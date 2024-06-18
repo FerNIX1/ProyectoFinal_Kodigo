@@ -44,7 +44,7 @@ class AuthController extends Controller
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'zipcode' => 'sometimes|string|max:10',
-            'payment' => 'required|string|max:255',
+            'paymethod' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
