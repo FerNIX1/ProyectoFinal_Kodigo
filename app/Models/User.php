@@ -31,7 +31,7 @@ class User extends Authenticatable implements JWTSubject
         'address',
         'city',
         'zipcode',
-        'payment',
+        'paymethod',
         'disabled'
     ];
 
