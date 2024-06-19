@@ -37,7 +37,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255|unique:users|alpha_dash',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'sometimes|string|max:255|default:user',
+            'role' => 'sometimes|string|max:255',
             'nombre' => 'required|string|max:255',
             'apellido' => 'required|string|max:255',
             'phone' => 'sometimes|string|max:20',
@@ -65,7 +65,7 @@ class AuthController extends Controller
 
         $user = User::create(array_merge(
             $validator->validated(),
-            ['password' => bcrypt($request->password)]
+            ['password' => bcrypt($request->password), 'role' => $request->role ?? 'user']
         ));
 
         return response()->json([

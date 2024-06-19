@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Validator;
 class ProductController extends Controller
 {
     public function test(){
-        return response()->json([
+        return response(json_encode([
             'message' => 'API is working!',
             'status' => true
-        ], 200);
+        ]), 200)->header('Content-Type', 'application/json');
     }
     public function getAllProducts(Request $request)
 {
