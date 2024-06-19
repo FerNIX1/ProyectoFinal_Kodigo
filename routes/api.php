@@ -20,9 +20,10 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api'); 
+    Route::post('register', [AuthController::class, 'register']);
+    Route::get('login', [AuthController::class, 'showLoginForm']);
+    Route::post('login', [AuthController::class, 'login'])->name('login');
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api'); 
 });
 
 Route::group(['middleware' => AuthMiddleware::class, 'prefix' => 'products'], function () {
@@ -33,15 +34,6 @@ Route::group(['middleware' => AuthMiddleware::class, 'prefix' => 'products'], fu
 });
 
 Route::group([
-    'middleware' => ['auth:api'],
-    'prefix' => 'profile'
-], function () {
-    Route::get('/', [UserController::class, 'show']);
-    Route::get('{id}', [UserController::class, 'searchUser']);
-    Route::patch('{id}', [UserController::class, 'updateUser']);
-});
-
-Route::group([
     'middleware' => AuthMiddleware::class, 
     'prefix' => 'orders'
 ], function () {
@@ -49,4 +41,13 @@ Route::group([
     Route::post('new', [PedidoController::class, 'createPedido']);
     Route::get('{id}', [PedidoController::class, 'getPedidoById']);
     Route::patch('{id}', [PedidoController::class, 'updatePedido']);
+});
+
+Route::group([
+    'middleware' => AuthMiddleware::class, 
+    'prefix' => 'profile'
+], function () {
+    Route::get('/', [UserController::class, 'show']);
+    Route::get('{id}', [UserController::class, 'getUserById']);
+    Route::patch('{id}', [UserController::class, 'updateUser']);
 });

@@ -43,16 +43,16 @@ class ProductController extends Controller
 
         $products = $query->paginate(10);
     }catch(\Exception $e){
-        return response()->json([
+        return response(json_encode([
             'message' => 'Error al acceder a la base de datos',
             'data' => $e->getMessage(),
-        ], 500);
+        ]), 500)->header('Content-Type', 'application/json');
     }
-    return response()->json([
+    return response(json_encode([
         'message' => 'Productos encontrados',
         'status' => true,
         'data' => $products
-    ], 200);
+    ]), 200)->header('Content-Type', 'application/json');
 }
 
     public function createProduct(Request $request){
@@ -60,17 +60,17 @@ class ProductController extends Controller
             $inventarioDB = Products::where('name', $request->name)->first();
 
         }catch(\Exception $e){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Error al acceder a la base de datos',
                 'data' => $e->getMessage(),
-            ], 500);
+            ]), 500)->header('Content-Type', 'application/json');
         }
         if($inventarioDB){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Producto ya existe',
                 'status' => false,
                 'data' => $inventarioDB
-            ], 409);
+            ]), 401)->header('Content-Type', 'application/json');
         }
         try{
             $validator = Validator::make($request->all(), [
@@ -89,18 +89,18 @@ class ProductController extends Controller
             ]);
     
             if ($validator->fails()) {
-                return response()->json([
+                return response(json_encode([
                     'status' => false,
                     'message' => 'Validation Error',
                     'data' => $validator->errors()
-                ], 400);
+                ]), 400)->header('Content-Type', 'application/json');
             }
         } catch(\Exception $e){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Error al crear producto',
                 'status' => false,
                 'data' => $e->getMessage()
-            ], 500);
+            ]), 500)->header('Content-Type', 'application/json');
         }
         try{
             if (!$request->has('keywords')) {
@@ -114,78 +114,78 @@ class ProductController extends Controller
             }
             $product = Products::create($request->all());
         }catch(\Exception $e){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Error al crear producto',
                 'status' => false,
                 'data' => $e->getMessage()
-            ], 500);
+            ]), 500)->header('Content-Type', 'application/json');
         }
-        return response()->json([
+        return response(json_encode([
             'message' => 'Producto creado',
             'status' => true,
             'data' => $product
-        ], 201);
+        ]), 201)->header('Content-Type', 'application/json');
     }
 
     public function getProductById($id){
         try{
             $product = Products::find($id);
         }catch(\Exception $e){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Error al acceder a la base de datos',
                 'data' => $e->getMessage(),
-            ], 500);
+            ]), 500)->header('Content-Type', 'application/json');
         }
         if(!$product){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Producto no encontrado',
                 'status' => false
-            ], 404);
+            ]), 404)->header('Content-Type', 'application/json');
         }
-        return response()->json([
+        return response(json_encode([
             'message' => 'Producto encontrado',
             'status' => true,
             'data' => $product
-        ], 200);
+        ]), 200)->header('Content-Type', 'application/json');
     }
 
     public function updateProduct(Request $request, $id){
         $delete = $request->input('delete');
         if($request->all() == [] && $delete !== 'true'){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'No data provided for update',
                 'status' => false
-            ], 400);
+            ]), 400)->header('Content-Type', 'application/json');
         }
         try{
             $product = Products::find($id);
         }catch(\Exception $e){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Error al acceder a la base de datos',
                 'data' => $e->getMessage(),
-            ], 500);
+            ]), 500)->header('Content-Type', 'application/json');
         }
         if(!$product){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Producto no encontrado',
                 'status' => false
-            ], 404);
+            ]), 404)->header('Content-Type', 'application/json');
         }
         if ($delete === 'true') {
             try{
                 $product->delete();
             }catch(\Exception $e){
-                return response()->json([
+                return response(json_encode([
                     'message' => 'Error al eliminar producto',
                     'status' => false,
                     'data' => $e->getMessage()
-                ], 500);
+                ]), 500)->header('Content-Type', 'application/json');
             }
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Producto eliminado',
                 'status' => true,
                 'data' => $product
-            ], 200);
+            ]), 200)->header('Content-Type', 'application/json');
         }
         try{
             $validator = Validator::make($request->all(), [
@@ -204,33 +204,33 @@ class ProductController extends Controller
             ]);
     
             if ($validator->fails()) {
-                return response()->json([
+                return response(json_encode([
                     'status' => false,
                     'message' => 'Validation Error',
                     'data' => $validator->errors()
-                ], 400);
+                ]), 400)->header('Content-Type', 'application/json');
             }
         } catch(\Exception $e){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Error al actualizar producto',
                 'status' => false,
                 'data' => $e->getMessage()
-            ], 500);
+            ]), 500)->header('Content-Type', 'application/json');
         }
         try{
             $product->update($request->all());
         }catch(\Exception $e){
-            return response()->json([
+            return response(json_encode([
                 'message' => 'Error al actualizar producto',
                 'status' => false,
                 'data' => $e->getMessage()
-            ], 500);
+            ]), 500)->header('Content-Type', 'application/json');
         }
-        return response()->json([
+        return response(json_encode([
             'message' => 'Producto actualizado',
             'status' => true,
             'data' => $product
-        ], 200);
+        ]), 200)->header('Content-Type', 'application/json');
     }
 
 

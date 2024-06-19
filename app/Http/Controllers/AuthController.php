@@ -37,6 +37,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255|unique:users|alpha_dash',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
+            'role' => 'sometimes|string|max:255|default:user',
             'nombre' => 'required|string|max:255',
             'apellido' => 'required|string|max:255',
             'phone' => 'sometimes|string|max:20',
@@ -117,6 +118,15 @@ class AuthController extends Controller
             'message' => 'Successfully logged out',
             'status' => true
         ], 200);
+    }
+
+    public function showLoginForm()
+    {
+        return response(json_encode([
+            'message' => 'A login is required to access this resource',
+            'status' => false,
+            'data' => null
+        ]), 403)->header('Content-Type', 'application/json');
     }
 
 

@@ -25,6 +25,5 @@ class Products extends Model
         'model',
         'availability',
         'keywords',
-        'deleted'
     ];
 }

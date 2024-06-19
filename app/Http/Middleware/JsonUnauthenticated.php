@@ -21,7 +21,7 @@ class JsonUnauthenticated
             return $next($request);
         } catch (AuthenticationException $e) {
             if($request->expectsJson()){
-                return response()->json(['message' => 'Unauthenticated.'], 401);
+                return response(json_encode(['message' => 'Unauthenticated.']), 401)->header('Content-Type', 'application/json');
             } else {
                 // Add appropriate return statement here
                 // For example, you might redirect to a login page:

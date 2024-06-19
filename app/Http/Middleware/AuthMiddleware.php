@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthMiddleware
 {
@@ -19,33 +20,30 @@ class AuthMiddleware
     {
         $authHeader = $request->header('Authorization');
         if (!$authHeader) {
-            return response()->json([
-                'message' => 'Unauthorized',
-                'status' => false,
-                'data' => null
-            ], 401);
+            return $this->unauthenticatedResponse();
         }
-        $token = explode(' ', $authHeader)[1];
+        $token = explode(' ', $authHeader)[1] ?? null;
         if (!$token) {
-            return response()->json([
-                'message' => 'Unauthorized',
-                'status' => false,
-                'data' => null
-            ], 401);
+            return $this->unauthenticatedResponse();
         }
 
-        try{
+        try {
             $user = JWTAuth::parseToken()->authenticate($token);
-            error_log('User: ' . $user);
+            Log::info('User: ' . $user);
             return $next($request);
+        } catch (JWTException $e) {
+            Log::error('JWT Exception: ' . $e->getMessage());
+            return $this->unauthenticatedResponse();
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Unauthorized',
+            Log::error('Exception: ' . $e->getMessage());
+            return response(json_encode([
+                'message' => 'Server error',
                 'status' => false,
                 'data' => null
-            ], 401);
+            ]), 500)->header('Content-Type', 'application/json');
         }
     }
+
     protected function redirectTo($request)
     {
         if (! $request->expectsJson()) {
@@ -53,7 +51,7 @@ class AuthMiddleware
         }
     }
 
-    protected function unauthenticated($request, array $guards)
+    protected function unauthenticatedResponse()
     {
         return response()->json(['message' => 'Unauthenticated.'], 401);
     }
