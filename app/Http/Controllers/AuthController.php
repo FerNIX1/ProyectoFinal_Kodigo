@@ -38,14 +38,14 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'role' => 'sometimes|string|max:255',
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'required|string|max:255',
+            'nombre' => 'sometimes|string|max:255',
+            'apellido' => 'sometimes|string|max:255',
             'phone' => 'sometimes|string|max:20',
             'dui' => 'sometimes|string|max:15',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'address' => 'sometimes|string|max:255',
+            'city' => 'sometimes|string|max:255',
             'zipcode' => 'sometimes|string|max:10',
-            'paymethod' => 'required|string|max:255',
+            'paymethod' => 'sometimes|string|max:255',
         ]);
 
         if ($validator->fails()) {
