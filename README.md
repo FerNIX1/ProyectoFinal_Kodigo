@@ -1,67 +1,172 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Documentación de Endpoints de la API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## General
 
-## About Laravel
+- **Punto de entrada**
+  - Todos los endpoints deben estar precedidos de la siguiente URL:
+  - https://103.89.13.32/api/ 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **GET /test (https://103.89.13.32/api/test)**
+  - Descripción: Endpoint de prueba.
+  - No recibe argumentos.
+  - Devuelve una respuesta 200 si la API esta funcionando.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **GET /user (https://103.89.13.32/api/user)**
+  - Descripción: Retorna la información del usuario autenticado.
+  - No recibe argumentos.
+  - Los valores retornados son los mismos introducidos en el metodo POST.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Autenticación
 
-## Learning Laravel
+- **POST /auth/register (https://103.89.13.32/api/auth/register)**
+  - Descripción: Registra un nuevo usuario.
+  - Devuelve la información del usuario creado menos la contraseña si la operación fue exitosa.
+  - Argumentos:
+    | Argumento  | Descripción |
+    | ------------- |:-------------|
+    | name | Requerido, cadena de caracteres, máximo 255 caracteres, único en la tabla de usuarios, solo puede contener letras, números, guiones y guiones bajos |
+    | email | Requerido, debe ser un correo electrónico válido, único en la tabla de usuarios |
+    | password | Requerido, cadena de caracteres, mínimo 6 caracteres |
+    | role | Opcional, cadena de caracteres, máximo 255 caracteres |
+    | nombre | Opcional, cadena de caracteres, máximo 255 caracteres |
+    | apellido | Opcional, cadena de caracteres, máximo 255 caracteres |
+    | phone | Opcional, cadena de caracteres, máximo 20 caracteres |
+    | dui | Opcional, cadena de caracteres, máximo 15 caracteres |
+    | address | Opcional, cadena de caracteres, máximo 255 caracteres |
+    | city | Opcional, cadena de caracteres, máximo 255 caracteres |
+    | zipcode | Opcional, cadena de caracteres, máximo 10 caracteres |
+    | paymethod | Opcional, cadena de caracteres, máximo 255 caracteres |
+    | deleted| Indica si el producto está eliminado. Opcional, se maneja internamente como 0 si no se proporciona.|
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **GET /auth/login (https://103.89.13.32/api/auth/login)**
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+  - Descripción: Muestra un mensaje indicando que la autenticación es requerida en caso el usuario quiera acceder a un recurso para el que no esta autorizado.
+  - No recibe argumentos.
+  
+- **POST /auth/login (https://103.89.13.32/api/auth/login)**
+  - Descripción: Autentica a un usuario y proporciona un token de autenticacion.
+  - Argumentos:
+    | Argumento  | Descripción |
+    | ------------- |:-------------|
+    | email | Requerido, debe ser un correo electrónico válido, único en la tabla de usuarios |
+    | password | Requerido, cadena de caracteres, mínimo 6 caracteres |
+ 
+  - Contenido de la respuesta:
+    | Argumento  | Descripción |
+    | ------------- |:-------------|
+    | access_token  | El token de acceso proporcionado al usuario en formato JWT.         |
+    | token_type    | El tipo de token, en este caso es un 'bearer'.       |
+    | expires_in    | El tiempo en segundos hasta que el token expira.     |
+    | status        | Un valor booleano que indica el éxito de la operación. |
+    | message       | Un mensaje que indica que el inicio de sesión fue exitoso. |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **POST /auth/logout (https://103.89.13.32/api/auth/logout**
+  - Descripción: Cierra sesión del usuario autenticado y muestra un mensaje indicando si fue existoso.
+  - No recibe argumentos.
 
-## Laravel Sponsors
+## Productos
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **GET /products/ (https://103.89.13.32/api/products)**
+  - Descripción: Recupera todos los productos en base a los parametros de busqueda.
+  - Los parametros de busqueda deben estar <a href="https://developers.google.com/maps/url-encoding?hl=es-419" target="_blank">codificados en formato URL</a> antes de ser enviados a la API.
+  - Se pueden encadenar dos o mas parametros de busqueda utilizando el simbolo ampersand (&).
+  - Ejemplo: https://103.89.13.32/api/products?category=frutas&name=banana
+  - Parametros de busqueda:
+    |Parámetro|Descripción|Ejemplo|
+    |---------|-----------|-------|
+    | (Ninguno)| Devuelve todos los productos existentes y que no esten desactivados.|https://103.89.13.32/api/products|
+    | category| Filtra los productos por la categoría especificada.|https://103.89.13.32/api/products?category=frutas|
+    | name| Busca productos que contengan en su nombre el texto especificado.|https://103.89.13.32/api/products?name=banana|
+    | make| Busca productos que contengan en su marca/fabricante el texto especificado.|https://103.89.13.32/api/products?make=Chiquita|
+    | model| Busca productos que contengan en su modelo el texto especificado.|https://103.89.13.32/api/products?model=Cavendish|
+    | color| Busca productos que contengan en su color el texto especificado.|https://103.89.13.32/api/products?color=yellow|
+    | creator_user_id| Filtra los productos por el ID del usuario creador.|https://103.89.13.32/api/products?creator_user_id=1
+    | availability| Filtra los productos que están disponibles si el valor es 'true'.|https://103.89.13.32/api/products?availability=true
 
-### Premium Partners
+- **POST /products/new (https://103.89.13.32/api/products/new)**
+  - Descripción: Crea un nuevo producto.
+  - Devuelve la información del producto creado si la operación fue exitosa.
+  - Argumentos:
+    | Argumento | Descripción |
+    | --------- | ----------- |
+    | name| El nombre del producto. Requerido, debe ser una cadena de caracteres de máximo 255 caracteres.|
+    | description| La descripción del producto. Opcional, cadena de caracteres de máximo 255 caracteres.|
+    | category| La categoría del producto. Requerido, debe ser una cadena de caracteres de máximo 255 caracteres.|
+    | price| El precio del producto. Requerido, debe ser numérico.|
+    | stock| La cantidad de stock del producto. Requerido, debe ser numérico.|
+    | img_url| La URL de la imagen del producto. Opcional, cadena de caracteres de máximo 255 caracteres.|
+    | color| El color del producto. Opcional, cadena de caracteres de máximo 50 caracteres.|
+    | make| La marca o fabricante del producto. Opcional, cadena de caracteres de máximo 255 caracteres.|
+    | model| El modelo del producto. Opcional, cadena de caracteres de máximo 255 caracteres.|
+    | availability| La disponibilidad del producto. Requerido, debe ser booleano.|
+    | keywords| Las palabras clave asociadas al producto. Opcional, cadena de caracteres de máximo 255 caracteres.|
+    | creator_user_id| El ID del usuario creador del producto. Requerido, debe ser entero.|
+    | deleted| Indica si el producto está eliminado. Opcional, se maneja internamente como 0 si no se proporciona.|
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- **GET /products/{id} (https://103.89.13.32/api/products/1)**
+  - Descripción: Recupera un producto por su ID y devuelve sus valores.
+  - El ID debe ser un numero entero.
+  - Los valores retornados son los mismos introducidos en el metodo POST.
 
-## Contributing
+- **PATCH /products/{id} (https://103.89.13.32/api/products/1)**
+  - Descripción: Actualiza un producto por su ID.
+  - Se puede actualizar cualquier argumento incluido en el metodo POST
+  - Tambien se pueden borrar productos con este metodo. Para hacerlo, basta con colocar el parametro delete despues del ID del producto
+  - Ejemplo: https://103.89.13.32/api/products/1?delete=true
+  - El usuario debe estar autenticado para ejecutar esta funcion y solo podran borrar pedidos los mismos usuarios que lo crearon y los administradores.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Pedidos
 
-## Code of Conduct
+- **GET /orders/ (https://103.89.13.32/api/orders)**
+  - Descripción: Recupera todos los pedidos del usuario autenticado.
+  - Los administradores tambien pueden adquirir pedidos de otros usuarios.
+  - Los parametros de busqueda funcionan de forma similar que la busqueda de productos.
+  - Se pueden encadenar dos o mas parametros de busqueda utilizando el simbolo ampersand (&).
+  - Ejemplo: https://103.89.13.32/api/orders?user_id=1&completed=false
+  - Parametros de busqueda:
+    | Parámetro| Descripción | Ejemplo |
+    |----------|-------------|---------|
+    | (Ninguno)| Devuelve todos los pedidos.|https://103.89.13.32/api/orders|
+    | pedido_id| Filtra los pedidos por el identificador único del pedido.|https://103.89.13.32/api/orders?pedido_id=1|
+    | producto_id| Filtra los pedidos que contienen el identificador del producto especificado.|https://103.89.13.32/api/orders?producto_id=1|
+    | user_id| Filtra los pedidos que contienen el identificador del usuario especificado.|https://103.89.13.32/api/orders?user_id=1|
+    | completed| Filtra los pedidos basándose en si han sido completados o no.|https://103.89.13.32/api/orders?completed=true|
+    | cancelled| Filtra los pedidos basándose en si han sido cancelados o no.|https://103.89.13.32/api/orders?cancelled=false|
+    | wishlist| Filtra los pedidos basándose en si están en la lista de deseos o no.|https://103.89.13.32/api/orders?wishlist=true|
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **POST /orders/new (https://103.89.13.32/api/orders/new)**
+  - Descripción: Crea un nuevo pedido.
+  - Argumentos:
+    | Argumento | Descripción |
+    | --------- | ----------- |
+    | pedido_id | Requerido, debe ser una cadena de caracteres única en la tabla de pedidos, máximo 255 caracteres. |
+    | producto_id  | Requerido, debe ser una cadena de caracteres, máximo 255 caracteres. |
+    | user_id | Requerido, debe ser una cadena de caracteres, máximo 255 caracteres. |
+    | amount | Requerido, debe ser una cadena de caracteres, máximo 255 caracteres. |
+    | completed | Opcional, debe ser un booleano, su valor por defecto es falso.|
+    | cancelled | Opcional, debe ser un booleano, su valor por defecto es falso. |
+    | wishlist | Opcional, debe ser un booleano, su valor por defecto es falso. |
 
-## Security Vulnerabilities
+- **PATCH /orders/{id} ((https://103.89.13.32/api/orders/1)**
+  - Descripción: Actualiza un pedido por su ID.
+  - Se puede actualizar cualquier argumento incluido en el metodo POST
+  - Tambien se pueden borrar pedidos con este metodo. Para hacerlo, basta con colocar el parametro delete despues del ID del pedido
+  - Ejemplo: https://103.89.13.32/api/orders/1?delete=true
+  - El usuario debe estar autenticado para ejecutar esta funcion y solo podran borrar pedidos los mismos usuarios que lo crearon y los administradores. Esto tambien asigna automaticamente el argumento cancelled como verdadero al pedido.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Perfil
 
-## License
+- **GET /profile/ (https://103.89.13.32/api/profile/)**
+  - Descripción: Devuelve la informacion del usuario autenticado.
+  - Devuelve los mismos campos que en el metodo POST del registro de usuarios.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# ProyectoFinal_Kodigo
+- **GET /profile/{id} (https://103.89.13.32/api/profile/1)**
+  - Descripción: Recupera un usuario por su ID y muestra sus datos.
+  - Funciona igual que la funcion anterior pero retornando la informacion del ID especificado.
+
+- **PATCH /profile/{id} (https://103.89.13.32/api/profile/1)**
+  - Descripción: Actualiza un usuario por su ID.
+  - Se puede actualizar cualquier argumento incluido en el metodo POST
+  - Tambien se pueden borrar usuarios con este metodo. Para hacerlo, basta con colocar el parametro delete despues del ID del pedido
+  - Ejemplo: https://103.89.13.32/api/profile/1?delete=true
+  - El usuario debe estar autenticado para ejecutar esta funcion y solo podran hacerlo el usuario dueño del perfil y los administradores.

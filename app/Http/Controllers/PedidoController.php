@@ -23,9 +23,6 @@ class PedidoController extends Controller
             if ($request->has('user_id')) {
                 $query->where('user_id', 'like', '%' . $request->input('user_id') . '%');
             }
-            if ($request->has('amount')) {
-                $query->where('amount', 'like', '%' . $request->input('amount') . '%');
-            }
             if ($request->has('completed')) {
                 $query->where('completed', 'like', '%' . $request->input('completed') . '%');
             }
@@ -73,9 +70,9 @@ class PedidoController extends Controller
             'producto_id' => 'required|string|max:255',
             'user_id' => 'required|string|max:255',
             'amount' => 'required|string|max:255',
-            'completed' => 'required|string|max:255',
-            'cancelled' => 'required|string|max:255',
-            'wishlist' => 'required|string|max:255',
+            'completed' => 'sometimes|boolean',
+            'cancelled' => 'sometimes|boolean',
+            'wishlist' => 'sometimes|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -147,28 +144,6 @@ class PedidoController extends Controller
         }
         return response(json_encode([
             'message' => 'Pedido actualizado',
-            'status' => true,
-            'data' => $pedido
-        ]), 200)->header('Content-Type', 'application/json');
-    }
-
-    public function getPedidoById($id){
-        try{
-            $pedido = Pedido::find($id);
-        }catch(\Exception $e){
-            return response(json_encode([
-                'message' => 'Error al acceder a la base de datos',
-                'data' => $e->getMessage(),
-            ]), 500)->header('Content-Type', 'application/json');
-        }
-        if(!$pedido){
-            return response(json_encode([
-                'message' => 'Pedido no encontrado',
-                'status' => false
-            ]), 404)->header('Content-Type', 'application/json');
-        }
-        return response(json_encode([
-            'message' => 'Pedido encontrado',
             'status' => true,
             'data' => $pedido
         ]), 200)->header('Content-Type', 'application/json');
